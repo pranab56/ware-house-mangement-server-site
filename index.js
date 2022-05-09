@@ -21,7 +21,7 @@ const verifyJWT = (req, res, next) => {
     }
     console.log("decoded", decoded);
     req.decoded = decoded;
-   
+    next();
   });
 };
 
@@ -49,7 +49,7 @@ async function run() {
     // Fruits Details
     app.get("/inventory/:id", async (req, res) => {
       const id = req.params.id;
-      const query = { _id: ObjectId(id) };
+      const query = {_id:ObjectId(id) };
       const item = await itemsCollection.findOne(query);
       res.send(item);
     });
@@ -58,7 +58,7 @@ async function run() {
     app.put("/inventory/:id", async (req, res) => {
       const id = req.params.id;
       const updateFruits = req.body;
-      const filter = {_id:ObjectId(id)};
+      const filter = {_id:id};
       const options = { upsert: true };
       const updated = {
         $set: {
@@ -72,7 +72,7 @@ async function run() {
     // Inventory Items DELETE
     app.delete("/inventory/:id", async (req, res) => {
       const id = req.params.id;
-      const query = { _id: ObjectId(id) };
+      const query = { _id:id };
       const result = await itemsCollection.deleteOne(query);
       res.send(result);
     });
@@ -80,7 +80,9 @@ async function run() {
     // POST(Add Fruits))
     app.post("/myItems", async (req, res) => {
       const newItems = req.body;
+    await itemsCollection.insertOne(newItems);
       const result = await myItemsCollection.insertOne(newItems);
+    
       res.send(result);
     });
 
@@ -91,6 +93,7 @@ async function run() {
       if (email === decodedEmail) {
         const query = { email: email };
         const cursor = myItemsCollection.find(query);
+        
         const myItems = await cursor.toArray();
         res.send(myItems);
       } else {
@@ -109,17 +112,17 @@ async function run() {
     // Deliver Button
     app.put("/items/deliver/:id", async (req, res) => {
       const id = req.params.id;
-      const newQuantity =req.body;
-      const deliver = newQuantity.quantityUpdate - 1;
-      const query = {_id: ObjectId(id) };
-      const options = { upsert: true };
+      console.log(id);
+      const query = {_id:ObjectId(id)};
+      const product=itemsCollection.findOne(query)
+      const deliver = product.quantity - 1;
       const updateDoc = {
         $set: {
           quantity: deliver,
         },
       };
 
-      const result = await itemsCollection.updateOne(query, updateDoc, options);
+      const result = await itemsCollection.updateOne(query, updateDoc);
       res.send(result);
     });
 
