@@ -83,7 +83,7 @@ async function run() {
     await itemsCollection.insertOne(newItems);
       const result = await myItemsCollection.insertOne(newItems);
     
-      res.send(result);
+     
     });
 
     // myItems Fruits Collection
