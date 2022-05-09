@@ -58,7 +58,7 @@ async function run() {
     app.put("/inventory/:id", async (req, res) => {
       const id = req.params.id;
       const updateFruits = req.body;
-      const filter = {_id:id};
+      const filter = {_id:ObjectId(id)};
       const options = { upsert: true };
       const updated = {
         $set: {
@@ -72,7 +72,7 @@ async function run() {
     // Inventory Items DELETE
     app.delete("/inventory/:id", async (req, res) => {
       const id = req.params.id;
-      const query = { _id:id };
+      const query = { _id:ObjectId(id) };
       const result = await itemsCollection.deleteOne(query);
       res.send(result);
     });
@@ -82,8 +82,7 @@ async function run() {
       const newItems = req.body;
     await itemsCollection.insertOne(newItems);
       const result = await myItemsCollection.insertOne(newItems);
-    
-     
+      res.send(result);
     });
 
     // myItems Fruits Collection
@@ -112,7 +111,6 @@ async function run() {
     // Deliver Button
     app.put("/items/deliver/:id", async (req, res) => {
       const id = req.params.id;
-      console.log(id);
       const query = {_id:ObjectId(id)};
       const product=itemsCollection.findOne(query)
       const deliver = product.quantity - 1;
