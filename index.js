@@ -21,7 +21,7 @@ const verifyJWT = (req, res, next) => {
     }
     console.log("decoded", decoded);
     req.decoded = decoded;
-    next();
+   
   });
 };
 
@@ -58,7 +58,7 @@ async function run() {
     app.put("/inventory/:id", async (req, res) => {
       const id = req.params.id;
       const updateFruits = req.body;
-      const filter = { _id: ObjectId(id) };
+      const filter = {_id:ObjectId(id)};
       const options = { upsert: true };
       const updated = {
         $set: {
@@ -101,7 +101,7 @@ async function run() {
     // myItems Delete
     app.delete("/myItems/:id", async (req, res) => {
       const id = req.params.id;
-      const query = { _id: ObjectId(id) };
+      const query = {_id:ObjectId(id)};
       const result = await myItemsCollection.deleteOne(query);
       res.send(result);
     });
@@ -109,9 +109,9 @@ async function run() {
     // Deliver Button
     app.put("/items/deliver/:id", async (req, res) => {
       const id = req.params.id;
-      const newQuantity = req.body;
+      const newQuantity =req.body;
       const deliver = newQuantity.quantityUpdate - 1;
-      const query = { _id: ObjectId(id) };
+      const query = {_id: ObjectId(id) };
       const options = { upsert: true };
       const updateDoc = {
         $set: {
